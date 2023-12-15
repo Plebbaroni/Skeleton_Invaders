@@ -12,8 +12,8 @@ public class Sprite {
     private boolean alive;
     private Image img;
     private boolean dying;
-    int x;
-    int y;
+    private int x;
+    private int y;
     
     public Sprite(){
         alive = true;

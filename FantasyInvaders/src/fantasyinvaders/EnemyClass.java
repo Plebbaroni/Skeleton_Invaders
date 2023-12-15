@@ -38,7 +38,7 @@ public class EnemyClass extends Sprite{
     
     // Positions an enemy in horizontal direction
     public void move(int direction){
-        this.x += direction;
+        setX(this.getX() + direction);
     }
     
     public class Arrow extends Sprite{
