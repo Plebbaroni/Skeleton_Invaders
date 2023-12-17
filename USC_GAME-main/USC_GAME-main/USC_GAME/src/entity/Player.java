@@ -15,6 +15,7 @@ public class Player extends Entity{
     GamePanel gp;
     KeyHandler keyH;
     
+    PrimaryAttack pa = new PrimaryAttack(gp);
     public int screenX;
     public int screenY;
     
@@ -89,7 +90,7 @@ public class Player extends Entity{
         int tempWorldX = worldX;
         int tempWorldY = worldY;
 
-        if (keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rightPressed) {
+        if (keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rightPressed || keyH.spacePressed) {
 
             /*if (keyH.upPressed) {
                 direction = "up";
@@ -109,6 +110,10 @@ public class Player extends Entity{
             if (keyH.rightPressed) {
                 direction = "right";
                 worldX += speed;
+            }
+            
+            if(keyH.spacePressed) {
+            	pa.addArrow(new Arrow(worldX, worldY, gp));           	
             }
 
             // Normalize diagonal movement

@@ -2,11 +2,15 @@ package main;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import entity.PrimaryAttack;
 
 public class KeyHandler implements KeyListener{
 
-    public boolean upPressed, downPressed, leftPressed, rightPressed, shiftPressed;
-
+    public boolean upPressed, downPressed, leftPressed, rightPressed, shiftPressed, spacePressed;
+    final AtomicBoolean canShoot = new AtomicBoolean(true);
+    
     @Override
     public void keyTyped(KeyEvent e) {
     }
@@ -32,6 +36,11 @@ public class KeyHandler implements KeyListener{
         if(code == KeyEvent.VK_SHIFT) {
         	shiftPressed = true;
         }
+        if (code == KeyEvent.VK_SPACE) {
+            if (canShoot.compareAndSet(true, false)) {
+                spacePressed = true; 
+            }
+        }
     }
 
 //    WHEN KEY IS NOT PRESSED
@@ -54,6 +63,12 @@ public class KeyHandler implements KeyListener{
         }
         if(code == KeyEvent.VK_SHIFT) {
         	shiftPressed = false;
+        }
+        if(code == KeyEvent.VK_SPACE) {
+        	spacePressed = false;
+        }
+        if (code == KeyEvent.VK_SPACE) {
+            canShoot.set(true);
         }
     }
     
