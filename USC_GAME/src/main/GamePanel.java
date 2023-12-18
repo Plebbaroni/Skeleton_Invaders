@@ -144,6 +144,7 @@ public class GamePanel extends JPanel implements Runnable{
             }
         }
     }
+    
 
     // UPDATES GAME EVENTS
     public void update(){
@@ -153,6 +154,11 @@ public class GamePanel extends JPanel implements Runnable{
         //Enemy
         for(Enemy enemy: enemies) {
         	enemy.act();
+        	if(enemy.isCollisionOn()) {
+        		for(Enemy setenemy: enemies) {
+        			setenemy.changeDirection(setenemy.getDirection());
+        		}
+        	}
         }
         
         //Attack

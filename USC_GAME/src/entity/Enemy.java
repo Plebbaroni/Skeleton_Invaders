@@ -55,31 +55,32 @@ public class Enemy extends Entity{
 	}
 	
 	public void act() {
-		int imageCycler = 0;
-        int tempWorldX = getX();
-        int tempWorldY = getY();
-        
         setX((getDirection()=="right")?getX() + getSpeed(): getX() - getSpeed());
         
         // CHECK TILE COLLISION
         setCollisionOn(false);
         gp.cChecker.checkTile(this);
         // IF COLLISION IS TRUE; PLAYER CANNOT MOVE
-        if (isCollisionOn() && getDirection()=="right") {
-            setX(tempWorldX);
-            setY(tempWorldY);
-            
+	}
+	
+	public void changeDirection(String direction){
+		int tempWorldX = getX();
+        int tempWorldY = getY();
+        setX(tempWorldX);
+        setY(tempWorldY);
+        
+        switch(direction) { 
+        case "right":        
             setDirection("left");
-            setY(getY() + getSpeed()*10);
+            setY(getY() + getSpeed());
             setCollisionOn(false);
-        }
-        if (isCollisionOn() && getDirection()=="left") {
-        	setX(tempWorldX);
-            setY(tempWorldY);
+        	break;
+        case "left":
             
             setDirection("right");
-            setY(getY() + getSpeed()*10);
+            setY(getY() + getSpeed());
             setCollisionOn(false);
+        	break;
         }
 	}
 	
