@@ -13,6 +13,7 @@ public class Player extends Entity{
     
     GamePanel gp;
     public KeyHandler keyH;
+    private int lives;
     public int screenX;
     public int screenY;
     
@@ -33,6 +34,7 @@ public class Player extends Entity{
     public void setDefaultValues(){
         setX(gp.tileSize * 9);
         setY(gp.tileSize * 10);
+        setLives(3);
         setSpeed(0);
         setDirection("right");
     }
@@ -41,7 +43,14 @@ public class Player extends Entity{
         var ii = new ImageIcon("/player/newPlayer1.png");
         setImage(ii.getImage());
     }
-
+    
+    public int getLives() {
+    	return lives;
+    }
+    
+    public void setLives(int lives) {
+    	this.lives = lives;
+    }
     public void act() {
         int imageCycler = 0;
         int tempWorldX = getX();
