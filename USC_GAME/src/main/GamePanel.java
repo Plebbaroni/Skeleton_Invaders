@@ -153,12 +153,12 @@ public class GamePanel extends JPanel implements Runnable{
         
         //Enemy
         for(Enemy enemy: enemies) {
-        	enemy.act();
         	if(enemy.isCollisionOn()) {
         		for(Enemy setenemy: enemies) {
         			setenemy.changeDirection(setenemy.getDirection());
         		}
         	}
+        	enemy.act();
         }
         
         //Attack

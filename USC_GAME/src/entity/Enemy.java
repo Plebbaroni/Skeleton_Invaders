@@ -75,8 +75,8 @@ public class Enemy extends Entity{
             setY(getY() + getSpeed());
             setCollisionOn(false);
         	break;
-        case "left":
-            
+        	
+        case "left":  
             setDirection("right");
             setY(getY() + getSpeed());
             setCollisionOn(false);
