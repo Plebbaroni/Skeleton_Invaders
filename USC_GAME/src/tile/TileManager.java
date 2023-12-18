@@ -128,8 +128,7 @@ public class TileManager {
 
 	        // Draw the corresponding number on top of the tile
 	        g2.setColor(Color.WHITE);
-	        g2.drawString(String.valueOf(tileNum), screenX + gp.tileSize / 2, screenY + gp.tileSize / 2);
-
+	     
 	        worldCol++;
 
 	        if (worldCol == gp.maxWorldCol) {

@@ -51,6 +51,7 @@ public class Player extends Entity{
     public void setLives(int lives) {
     	this.lives = lives;
     }
+    
     public void act() {
         int imageCycler = 0;
         int tempWorldX = getX();
@@ -166,6 +167,22 @@ public class Player extends Entity{
 					}
                 }
                 break;
+            case "hit":
+            	try {
+					setImage(ImageIO.read(getClass().getResourceAsStream("/player/newPlayer4.png")));
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+            	break;
+            case "dead":
+            	try {
+					setImage(ImageIO.read(getClass().getResourceAsStream("")));
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+            	break;
         }
 
         g2.drawImage(getImage(), screenX, screenY, gp.tileSize, gp.tileSize * 2, null);
