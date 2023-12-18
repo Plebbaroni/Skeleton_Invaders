@@ -4,10 +4,14 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.swing.JPanel;
 
+import entity.Arrow;
 import entity.Player;
+import entity.PrimaryAttack;
 import tile.TileManager;
 import main.CollisionChecker;
 import main.KeyHandler;
@@ -49,7 +53,8 @@ public class GamePanel extends JPanel implements Runnable{
     Thread gameThread;
     public CollisionChecker cChecker = new CollisionChecker(this);
     public Player player = new Player(this, keyHandler);
-
+    public PrimaryAttack pa = new PrimaryAttack(this);
+    private final AtomicBoolean canShoot = new AtomicBoolean(true);
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
         this.setBackground(Color.black);
@@ -86,7 +91,7 @@ public class GamePanel extends JPanel implements Runnable{
     public int getPlayerScreenY() {
         return player.screenY;
     }
-
+    
     
 // TIME SHIT TO SET FPS
     public void run() {
@@ -119,12 +124,18 @@ public class GamePanel extends JPanel implements Runnable{
             }
         }
     }
-
+ 
 // UPDATES AND DRAWS CHARACTER
     public void update(){
         player.update();
-    }
+        pa.tick();
 
+        if(keyHandler.spacePressed){
+        	pa.addArrow(new Arrow(player.worldX+32, player.worldY, this)); 
+        	keyHandler.spacePressed = false;
+        }
+    }
+    
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
@@ -132,10 +143,10 @@ public class GamePanel extends JPanel implements Runnable{
 
         // Draw tiles without adjusting for player's position
         tileM.draw(g2);
+        pa.draw(g2);
 
         // Draw player using its screen coordinates directly
         player.draw(g2);
-
         g2.dispose();
     }
 }

@@ -78,7 +78,7 @@ public class GamePanel extends JPanel implements Runnable{
     	enemies = new ArrayList<>();
         for(int y = 0; y <= 4; y++) {
         	for(int x = 6; x <= 12; x++) {
-    			var enemy = (y != 4)? new Skeleton(this.tileSize * x,this.tileSize * y) : new ArmoredSkeleton(this.tileSize * x,this.tileSize * y);
+    			var enemy = (y != 4)? new Skeleton(this, this.tileSize * x,this.tileSize * y) : new ArmoredSkeleton(this, this.tileSize * x,this.tileSize * y);
     			enemies.add(enemy);
     			System.out.println("Enemy Added");
         	}
@@ -151,6 +151,9 @@ public class GamePanel extends JPanel implements Runnable{
         player.act();
         
         //Enemy
+        for(Enemy enemy: enemies) {
+        	enemy.act();
+        }
         
         //Attack
         if(player.keyH.spacePressed == true && !attack.isVisible()) {
@@ -196,11 +199,12 @@ public class GamePanel extends JPanel implements Runnable{
     
     public void drawEnemy(Graphics2D g2) {
     	for(Enemy enemy : enemies) {
-    		g2.drawImage(enemy.getImage(), enemy.getX(), enemy.getY(), this);
+    		g2.drawImage(enemy.getImage(), enemy.getX(), enemy.getY(), tileSize, tileSize*2, this);
     	}
     }
     
     public void drawAttack(Graphics2D g2) {
+  
     	if(attack.isVisible()) {
     		g2.drawImage(attack.getImage(), attack.getX(), attack.getY(), this);
     	}

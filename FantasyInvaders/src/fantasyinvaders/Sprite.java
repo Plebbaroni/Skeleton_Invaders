@@ -4,6 +4,8 @@
  */
 package fantasyinvaders;
 
+import java.awt.Image;
+
 /**
  *
  * @author Marlex
