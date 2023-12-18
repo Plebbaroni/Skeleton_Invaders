@@ -66,7 +66,8 @@ public class TileManager {
 	                System.out.println("Failed to load image at path: /tiles/fort" + (i - 55) + ".png");
 	            }
 	        }
-	        
+	        tile[1].collision = true;
+	        tile[2].collision = true;
 	        tile[68] = new Tile();
 	        tile[69] = new Tile();
 	        tile[68].image = ImageIO.read(getClass().getResourceAsStream("/tiles/fort56.png"));

@@ -14,8 +14,8 @@ public class Player extends Entity{
     
     GamePanel gp;
     KeyHandler keyH;
+
     
-    PrimaryAttack pa = new PrimaryAttack(gp);
     public int screenX;
     public int screenY;
     
@@ -73,7 +73,8 @@ public class Player extends Entity{
 
     public void update() {
         int imageCycler = 0;
-
+        PrimaryAttack pa = new PrimaryAttack(gp);
+         
         if (keyH.upPressed == false && keyH.downPressed == false &&
                 keyH.leftPressed == false && keyH.rightPressed == false) {
             spriteNum = 1;
@@ -105,6 +106,7 @@ public class Player extends Entity{
             if (keyH.leftPressed) {
                 direction = "left";
                 worldX -= speed;
+                
             }
 
             if (keyH.rightPressed) {
@@ -113,7 +115,7 @@ public class Player extends Entity{
             }
             
             if(keyH.spacePressed) {
-            	pa.addArrow(new Arrow(worldX, worldY, gp));           	
+            
             }
 
             // Normalize diagonal movement

@@ -129,7 +129,7 @@ public class GamePanel extends JPanel implements Runnable{
     public void update(){
         player.update();
         pa.tick();
-        
+
         if(keyHandler.spacePressed){
         	pa.addArrow(new Arrow(player.worldX+32, player.worldY, this)); 
         	keyHandler.spacePressed = false;

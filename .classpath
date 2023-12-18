@@ -8,5 +8,6 @@
 	<classpathentry kind="src" path="FantasyInvaders/src"/>
 	<classpathentry kind="src" path="USC_GAME-main/USC_GAME-main/USC_GAME/src"/>
 	<classpathentry kind="src" path="USC_GAME-main/USC_GAME-main/USC_GAME/res"/>
+	<classpathentry kind="src" path="USC_GAME/res"/>
 	<classpathentry kind="output" path="USC_GAME-main/USC_GAME-main/USC_GAME/bin"/>
 </classpath>

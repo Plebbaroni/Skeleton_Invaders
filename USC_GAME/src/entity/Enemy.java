@@ -1,6 +1,7 @@
 package entity;
 
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -11,10 +12,25 @@ import main.GamePanel;
 public class Enemy extends Entity{
 	private int health;
 	private EnemyAttack attack;
+	public GamePanel gp;
 	
-	public Enemy(int x, int y) {
+	public Enemy(GamePanel gp, int x, int y) {
+		this.gp = gp;
 		initEnemy(x, y);
+		Rectangle area = new Rectangle();
+        area.x = 20;
+        area.y = 135;
+        area.width = 40;
+        area.height = 12;
+        setSolidArea(area);
+        setDefaultValues();
 	}
+	
+  public void setDefaultValues(){
+        setSpeed(5);
+ 
+        setDirection("right");
+    }
 	
 	public int getHealth() {
 		return health;
@@ -36,6 +52,35 @@ public class Enemy extends Entity{
 	
 	public void move(int direction) {
 		setX(getX() + direction);
+	}
+	
+	public void act() {
+		int imageCycler = 0;
+        int tempWorldX = getX();
+        int tempWorldY = getY();
+        
+        setX((getDirection()=="right")?getX() + getSpeed(): getX() - getSpeed());
+        
+        // CHECK TILE COLLISION
+        setCollisionOn(false);
+        gp.cChecker.checkTile(this);
+        // IF COLLISION IS TRUE; PLAYER CANNOT MOVE
+        if (isCollisionOn() && getDirection()=="right") {
+            setX(tempWorldX);
+            setY(tempWorldY);
+            
+            setDirection("left");
+            setY(getY() + getSpeed()*10);
+            setCollisionOn(false);
+        }
+        if (isCollisionOn() && getDirection()=="left") {
+        	setX(tempWorldX);
+            setY(tempWorldY);
+            
+            setDirection("right");
+            setY(getY() + getSpeed()*10);
+            setCollisionOn(false);
+        }
 	}
 	
 	public class EnemyAttack extends Entity{
@@ -66,8 +111,8 @@ public class Enemy extends Entity{
 	}	
 	
 	public static class Skeleton extends Enemy{
-		public Skeleton(int x, int y) {
-			super(x, y);
+		public Skeleton(GamePanel gp, int x, int y) {
+			super(gp ,x, y);
 			try {
 				setImage(ImageIO.read(getClass().getResourceAsStream("/enemy/Skeleton1.png")));
 			} catch (IOException e) {
@@ -79,8 +124,8 @@ public class Enemy extends Entity{
 	}
 	
 	public static class ArmoredSkeleton extends Skeleton{
-		public ArmoredSkeleton(int x, int y) {
-			super(x, y);
+		public ArmoredSkeleton(GamePanel gp, int x, int y) {
+			super(gp, x, y);
 			try {
 				setImage(ImageIO.read(getClass().getResourceAsStream("/enemy/ArmoredSkeleton1.png")));
 			} catch (IOException e) {
