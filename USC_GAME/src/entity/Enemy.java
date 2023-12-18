@@ -27,7 +27,7 @@ public class Enemy extends Entity{
 	}
 	
   public void setDefaultValues(){
-        setSpeed(5);
+        setSpeed(1);
  
         setDirection("right");
     }
@@ -50,38 +50,8 @@ public class Enemy extends Entity{
 		return attack;
 	}
 	
-	public void move(int direction) {
-		setX(getX() + direction);
-	}
-	
-	public void act() {
-        setX((getDirection()=="right")?getX() + getSpeed(): getX() - getSpeed());
-        
-        // CHECK TILE COLLISION
-        setCollisionOn(false);
-        gp.cChecker.checkTile(this);
-        // IF COLLISION IS TRUE; PLAYER CANNOT MOVE
-	}
-	
-	public void changeDirection(String direction){
-		int tempWorldX = getX();
-        int tempWorldY = getY();
-        setX(tempWorldX);
-        setY(tempWorldY);
-        
-        switch(direction) { 
-        case "right":        
-            setDirection("left");
-            setY(getY() + getSpeed());
-            setCollisionOn(false);
-        	break;
-        	
-        case "left":  
-            setDirection("right");
-            setY(getY() + getSpeed());
-            setCollisionOn(false);
-        	break;
-        }
+	public void move() {
+		setX((getDirection()=="right")?getX() + getSpeed(): getX() - getSpeed());
 	}
 	
 	public class EnemyAttack extends Entity{
@@ -91,7 +61,7 @@ public class Enemy extends Entity{
 			initAttack(x, y);
 		}
 		
-		public boolean getDestroyed(){
+		public boolean isDestroyed(){
             return isDestroyed;
         }
         public void setDestroyed(boolean destroyed){
