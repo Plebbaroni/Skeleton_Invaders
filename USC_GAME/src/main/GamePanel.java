@@ -2,8 +2,10 @@ package main;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
@@ -64,7 +66,8 @@ public class GamePanel extends JPanel implements Runnable{
     public Player player;
     private PlayerAttack attack;
     private List<Enemy> enemies;
-
+    private int enemyKillCount;
+ 
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
         this.setBackground(Color.black);
@@ -81,6 +84,7 @@ public class GamePanel extends JPanel implements Runnable{
     
     public void initGame() {
     	enemies = new ArrayList<>();
+    	enemyKillCount=0;
         for(int y = 0; y <= 5; y++) {
         	for(int x = 6; x <= 16; x++) {
     			var enemy = (y < 4)? new Skeleton(this, this.tileSize * x,this.tileSize * y) : new ArmoredSkeleton(this, this.tileSize * x,this.tileSize * y);
@@ -88,6 +92,7 @@ public class GamePanel extends JPanel implements Runnable{
     			System.out.println("Enemy Added");
         	}
         }
+        
         
         player = new Player(this, keyHandler);
         attack = new PlayerAttack();
@@ -153,126 +158,136 @@ public class GamePanel extends JPanel implements Runnable{
     // UPDATES GAME EVENTS
     public void update(){
     	//Player
-        player.act();
-        
-        //Enemy
-        for(Enemy enemy: enemies) {
-        	enemy.setCollisionOn(false);
-            this.cChecker.checkTile(enemy);
-            if (enemy.isCollisionOn() && enemy.getDirection()=="right") {
-                Iterator<Enemy> i1 = enemies.iterator();
-                while(i1.hasNext()) {
-                	Enemy e1 = i1.next();
-                	e1.setY(e1.getY() + 10);
-                	e1.setDirection("left");
-                	e1.setCollisionOn(false);
-                }
-                
-            }
-            if (enemy.isCollisionOn() && enemy.getDirection()=="left") {
-                Iterator<Enemy> i2 = enemies.iterator();
-                while(i2.hasNext()) {
-                	Enemy e2 = i2.next();
-                	e2.setY(e2.getY() + 10);
-                	e2.setCollisionOn(false);
-                	e2.setDirection("right");
-                }
-                
-            }
-        }
-        
-        Iterator<Enemy> it = enemies.iterator();
-        
-        while(it.hasNext()) {
-        	Enemy enemy = it.next();
-        	if(enemy.isVisible()) {
-        		int y = enemy.getY();
-        		if(y > 130) {
-//        			System.out.println(y);
-        		}
-        		enemy.move();
-        	}
-        }
-        
-        //Attack
-        if(player.keyH.spacePressed == true && !attack.isVisible()) {
-        	attack = new PlayerAttack(player.getX(), player.getY());
-        }
-        if(attack.isVisible()) {
-        	int atkX = attack.getX();
-        	int atkY = attack.getY();
-        	for(Enemy enemy : enemies) {
-        		int enemyX = enemy.getX();
-                int enemyY = enemy.getY();
-
-                if (enemy.isVisible() && attack.isVisible()) {
-                   if(atkX >= enemyX && atkX <= (enemyX + tileSize/2) && atkY >= enemyY && atkY <= (enemyY + tileSize)) {
-                	   attack.die();
-                	   enemy.setHealth(enemy.getHealth() - 1);
-                	   if(enemy.getHealth() == 1) {
-                		   try {
-	               				enemy.setImage(ImageIO.read(getClass().getResourceAsStream("/enemy/Skeleton1.png")));
-	               			} catch (IOException e) {
-	               				// TODO Auto-generated catch block
-	               				e.printStackTrace();
-	               			}
-                	   }
-                	   if(enemy.getHealth() <= 0) {
-                		   enemy.setDying(true);
-                	   }
-                   }
-                }
-        	}
-        	int y = attack.getY();
-	        y -= 10;
-	
-	        if (y < 0) {
-	            attack.die();
-	        } else {
-	            attack.setY(y);
+    	if(player.getLives()<=0) {
+			player.setDirection("dead");
+		}else {
+			player.act();
+			
+			 //Attack
+	        if(player.keyH.spacePressed == true && !attack.isVisible()) {
+	        	attack = new PlayerAttack(player.getX(), player.getY());
 	        }
-        }
+	        if(attack.isVisible()) {
+	        	int atkX = attack.getX();
+	        	int atkY = attack.getY();
+	        	for(Enemy enemy : enemies) {
+	        		int enemyX = enemy.getX();
+	                int enemyY = enemy.getY();
+
+	                if (enemy.isVisible() && attack.isVisible()) {
+	                   if(atkX >= enemyX && atkX <= (enemyX + tileSize/2) && atkY >= enemyY && atkY <= (enemyY + tileSize)) {
+	                	   attack.die();
+	                	   enemy.setHealth(enemy.getHealth() - 1);
+	                	   if(enemy.getHealth() == 1) {              		  
+	                		   try {
+		               				enemy.setImage(ImageIO.read(getClass().getResourceAsStream("/enemy/Skeleton1.png")));
+		               			} catch (IOException e) {
+		               				// TODO Auto-generated catch block
+		               				e.printStackTrace();
+		               			}
+	                	   }
+	                	   if(enemy.getHealth() <= 0) {
+	                		   enemy.setDying(true);
+	                		   enemyKillCount++;
+	                	   }
+	                   }
+	                }
+	        	}
+	        	int y = attack.getY();
+		        y -= 10;
+		
+		        if (y < 0) {
+		            attack.die();
+		        } else {
+		            attack.setY(y);
+		        }
+	        }
+	      //Enemy
+	        for(Enemy enemy: enemies) {
+	        	enemy.setCollisionOn(false);
+	            this.cChecker.checkTile(enemy);
+	            if (enemy.isCollisionOn() && enemy.getDirection()=="right") {
+	                Iterator<Enemy> i1 = enemies.iterator();
+	                while(i1.hasNext()) {
+	                	Enemy e1 = i1.next();
+	                	e1.setY(e1.getY() + 10);
+	                	e1.setDirection("left");
+	                	e1.setCollisionOn(false);
+	                }
+	                
+	            }
+	            if (enemy.isCollisionOn() && enemy.getDirection()=="left") {
+	                Iterator<Enemy> i2 = enemies.iterator();
+	                while(i2.hasNext()) {
+	                	Enemy e2 = i2.next();
+	                	e2.setY(e2.getY() + 10);
+	                	e2.setCollisionOn(false);
+	                	e2.setDirection("right");
+	                }
+	                
+	            }
+	        }
 	        
-        //Enemy Attack
-        var generator = new Random();
-        for(Enemy enemy : enemies) {
-        	int shoot = generator.nextInt(5000);
-        	Enemy.EnemyAttack attack = enemy.attack();
-        	if(shoot == 500 && enemy.isVisible() && attack.isDestroyed()) {
-        		attack.setDestroyed(false);
-        		attack.setX(enemy.getX());
-        		attack.setY(enemy.getY());
-        	}
-        	
-        	int atkX = attack.getX();
-        	int atkY = attack.getY();
-        	int playerX = player.getX();
-        	int playerY = player.getY();
-        	if(player.isVisible() && !attack.isDestroyed()) {
-        		if(atkX >= playerX && atkX <= (playerX + tileSize) && atkY >= playerY && atkY <= (playerY + tileSize*2)) { // needs improvement
-        			player.setLives(player.getLives() - 1);
-        			System.out.println(player.getLives() + "left");
-        			if(player.getLives() <= 0) {
-        				
-        			}
-        			attack.setDestroyed(true);
-        			
-        		}
-        	}
-        	
-        	if(!attack.isDestroyed()) {
-        		attack.setY(attack.getY() + 3);
-        		if(attack.getY() >= player.getY()) {
-        			attack.setDestroyed(true);
-        		}
-        	}
-        }
+	        Iterator<Enemy> it = enemies.iterator();
+	        
+	        while(it.hasNext()) {
+	        	Enemy enemy = it.next();
+	        	if(enemy.isVisible()) {
+	        		int y = enemy.getY();
+	        		if(y > 130) {
+//	        			System.out.println(y);
+	        		}
+	        		enemy.move();
+	        	}
+	        }
+		        
+	        //Enemy Attack
+	        var generator = new Random();
+	        for(Enemy enemy : enemies) {
+	        	int shoot = generator.nextInt(5000);
+	        	Enemy.EnemyAttack attack = enemy.attack();
+	        	if(shoot == 500 && enemy.isVisible() && attack.isDestroyed()) {
+	        		attack.setDestroyed(false);
+	        		attack.setX(enemy.getX());
+	        		attack.setY(enemy.getY());
+	        	}
+	        	
+	        	int atkX = attack.getX();
+	        	int atkY = attack.getY();
+	        	int playerX = player.getX();
+	        	int playerY = player.getY();
+	        	if(player.isVisible() && !attack.isDestroyed()) {
+	        		if(atkX >= playerX && atkX <= (playerX + tileSize) && atkY >= playerY && atkY <= (playerY + tileSize*2)) { // needs improvement
+	        			player.setLives(player.getLives() - 1);
+	        			System.out.println(player.getLives() + "left");
+	        			player.setDirection("hit");
+	        			attack.setDestroyed(true);
+	        		}
+	        	}
+	        	
+	        	if(!attack.isDestroyed()) {
+	        		attack.setY(attack.getY() + 3);
+	        	}
+	        }
+		}
     }
 
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
         doDrawing(g2);
+        String text = (enemies.size()==enemyKillCount)?"You Win":"You Lose";
+        if(player.getLives()<=0 || enemies.size()==enemyKillCount) {
+        	g2.setColor(new Color(0,0,0,150));
+          	g2.fillRect(0, 0 , screenWidth, screenHeight);
+          	int x = tileSize*6;
+          	int y = tileSize*6;
+          	g2.setFont(g2.getFont().deriveFont(Font.BOLD, 210f));
+          	g2.setColor(Color.black);
+          	g2.drawString(text, x+4, y+4);
+          	g2.setColor(Color.white);
+          	g2.drawString(text, x, y);  
+        }
         g2.dispose();
     }
     
@@ -282,6 +297,7 @@ public class GamePanel extends JPanel implements Runnable{
     	drawEnemy(g2);
     	drawAttack(g2);
     	drawEnemyAttack(g2);
+    	drawLives(g2);
     }
     
     public void drawEnemy(Graphics2D g2) {
@@ -294,6 +310,18 @@ public class GamePanel extends JPanel implements Runnable{
     			enemy.die();
     		}
     	}
+    }
+    
+    public void drawLives(Graphics2D g2) {
+    	try {
+    		Image img = ImageIO.read(getClass().getResourceAsStream("/player/heart.png"));
+    		for(int lives=0; lives<player.getLives(); lives++) {
+        		g2.drawImage(img, lives*50, lives, tileSize, tileSize, this);
+        	}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
     
     public void drawAttack(Graphics2D g2) {
