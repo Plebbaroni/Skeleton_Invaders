@@ -86,8 +86,6 @@ public class Player extends Entity {
 
 	public void act() {
 		int imageCycler = 0;
-		int tempWorldX = getX();
-		int tempWorldY = getY();
 		if (keyH.leftPressed == false && keyH.rightPressed == false) {
 			setSpriteNum(1);
 		} else {
@@ -102,12 +100,12 @@ public class Player extends Entity {
 			}
 
 			// CHECK TILE COLLISION
-			setCollisionOn(false);
-			gp.getcChecker().checkTile(this);
 			// IF COLLISION IS TRUE; PLAYER CANNOT MOVE
-			if (isCollisionOn()) {
-				setX(tempWorldX);
-				setY(tempWorldY);
+			if(getX() <= 0) {
+				setX(0);
+			}
+			if(getX() >= gp.getScreenWidth() - gp.getTileSize()) {
+				setX(gp.getScreenWidth() - gp.getTileSize());
 			}
 
 			setSpriteCounter(getSpriteCounter() + 1);
@@ -237,7 +235,7 @@ public class Player extends Entity {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			setX(x + 35);
+			setX(x + 13);
 			setY(y - 1);
 		}
 	}

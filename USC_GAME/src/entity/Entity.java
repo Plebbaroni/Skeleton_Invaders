@@ -4,17 +4,14 @@ import java.awt.Rectangle;
 import java.awt.Image;
 
 public class Entity {
-	private int worldX;
-	private int worldY;
-	private int dirX;
+	private int x;
+	private int y;
 	private int speed;
-	private int originalSpeed;
 	private Image image;
 	private String direction;
 	private int spriteCounter;
 	private int spriteNum;
 	private Rectangle solidArea;
-	private boolean collisionOn;
 	private boolean visible;
 	private boolean dying;
 
@@ -47,27 +44,19 @@ public class Entity {
 	}
 
 	public int getX() {
-		return worldX;
+		return x;
 	}
 
 	public void setX(int x) {
-		this.worldX = x;
-	}
-
-	public int getDirX() {
-		return dirX;
-	}
-
-	public void setDirX(int x) {
-		this.dirX = x;
+		this.x = x;
 	}
 
 	public int getY() {
-		return worldY;
+		return y;
 	}
 
 	public void setY(int y) {
-		this.worldY = y;
+		this.y = y;
 	}
 
 	public int getSpeed() {
@@ -76,14 +65,6 @@ public class Entity {
 
 	public void setSpeed(int speed) {
 		this.speed = speed;
-	}
-
-	public int getOriginalSpeed() {
-		return originalSpeed;
-	}
-
-	public void setOriginalSpeed(int originalSpeed) {
-		this.originalSpeed = originalSpeed;
 	}
 
 	public Image getImage() {
@@ -126,11 +107,4 @@ public class Entity {
 		this.solidArea = solidArea;
 	}
 
-	public boolean isCollisionOn() {
-		return collisionOn;
-	}
-
-	public void setCollisionOn(boolean collisionOn) {
-		this.collisionOn = collisionOn;
-	}
 }
