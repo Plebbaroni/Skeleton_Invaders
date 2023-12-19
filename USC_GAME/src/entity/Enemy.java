@@ -7,9 +7,6 @@ import javax.imageio.ImageIO;
 public class Enemy extends Entity {
 	private int health;
 	private EnemyAttack attack;
-	private int enemySprite;
-	private int moveCounter;
-	private int animator;
 
 	public Enemy(int x, int y) {
 		initEnemy(x, y);
@@ -19,24 +16,10 @@ public class Enemy extends Entity {
 		area.width = 40;
 		area.height = 12;
 		setSolidArea(area);
-		setDefaultValues();
-		enemySprite = 1;
-		moveCounter = 0;
-		animator = 20;
-	}
-
-	public int getEnemySprite() {
-		return enemySprite;
-	}
-
-	public void setEnemySprite(int num) {
-		this.enemySprite = num;
-	}
-
-	public void setDefaultValues() {
 		setSpeed(1);
-
 		setDirection("left");
+		setSpriteNum(1);
+		setSpriteCounter(0);
 	}
 
 	public int getHealth() {
@@ -59,19 +42,19 @@ public class Enemy extends Entity {
 
 	public void move() {
 		setX((getDirection() == "right") ? getX() + getSpeed() : getX() - getSpeed());
-		moveCounter++;
-		if (moveCounter > animator) {
-			if (enemySprite == 1 || enemySprite == 3) {
+		setSpriteCounter(getSpriteCounter() + 1);
+		if (getSpriteCounter() > 20) {
+			if (getSpriteNum() == 1 || getSpriteNum() == 3) {
 				try {
 					setImage(getHealth() == 2
 							? ImageIO.read(getClass().getResourceAsStream("/enemy/ArmoredSkeleton2.png"))
 							: ImageIO.read(getClass().getResourceAsStream("/enemy/Skeleton2.png")));
-					enemySprite = 2;
+					setSpriteNum(2);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-			} else if (enemySprite == 2) {
+			} else {
 				try {
 					setImage(getHealth() == 2
 							? ImageIO.read(getClass().getResourceAsStream("/enemy/ArmoredSkeleton3.png"))
@@ -80,9 +63,49 @@ public class Enemy extends Entity {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				enemySprite = 3;
+				setSpriteNum(3);
+
 			}
-			moveCounter = 0;
+			setSpriteCounter(0);
+		}
+
+	}
+
+	public void moveLose(Player player, int screenWidth, int tileSize) {
+		if (getY() < player.getY()) {
+			setY(getY() + 5);
+		} else if (getX() < (screenWidth - tileSize) / 2 - 5) {
+			setX(getX() + 5);
+		} else if (getX() > (screenWidth - tileSize) / 2 + 5) {
+			setX(getX() - 5);
+		} else {
+			die();
+		}
+		setSpriteCounter(getSpriteCounter() + 1);
+		if (getSpriteCounter() > 15) {
+			if (getSpriteNum() == 1 || getSpriteNum() == 3) {
+				try {
+					setImage(getHealth() == 2
+							? ImageIO.read(getClass().getResourceAsStream("/enemy/ArmoredSkeleton2.png"))
+							: ImageIO.read(getClass().getResourceAsStream("/enemy/Skeleton2.png")));
+					setSpriteNum(2);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} else {
+				try {
+					setImage(getHealth() == 2
+							? ImageIO.read(getClass().getResourceAsStream("/enemy/ArmoredSkeleton3.png"))
+							: ImageIO.read(getClass().getResourceAsStream("/enemy/Skeleton3.png")));
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				setSpriteNum(3);
+
+			}
+			setSpriteCounter(0);
 		}
 	}
 

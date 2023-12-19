@@ -24,7 +24,7 @@ public class GamePanel extends JPanel implements Runnable {
 
 	// SCREEN SETTINGS
 	private final int originalTileSize = 16; // 16x16 tile
-	private final int scale = 5;
+	private final int scale = 3;
 	private final int tileSize = originalTileSize * scale; // 80x80 tile
 	private final int maxScreenCol = 24; // original = 24
 	private final int maxScreenRow = 13; // original = 13
@@ -42,7 +42,6 @@ public class GamePanel extends JPanel implements Runnable {
 	private TileManager tileM = new TileManager(this);
 	private KeyHandler keyHandler = new KeyHandler();
 	private Thread gameThread;
-	private CollisionChecker cChecker = new CollisionChecker(this);
 	private Player player;
 	private PlayerAttack attack;
 	private List<Enemy> enemies;
@@ -61,15 +60,27 @@ public class GamePanel extends JPanel implements Runnable {
 	public int getTileSize() {
 		return tileSize;
 	}
+	
+	public int getScale() {
+		return scale;
+	}
+	
+	public int getOriginalTileSize() {
+		return originalTileSize;
+	}
+
+	public int getScreenWidth() {
+		return screenWidth;
+	}
+
+	public int getScreenHeight() {
+		return screenHeight;
+	}
 
 	public boolean hasInvaded() {
 		return hasInvaded;
 	}
-
-	public CollisionChecker getcChecker() {
-		return cChecker;
-	}
-
+	
 	public TileManager getTileM() {
 		return tileM;
 	}
@@ -92,10 +103,6 @@ public class GamePanel extends JPanel implements Runnable {
 
 	public void setGameThread(Thread gameThread) {
 		this.gameThread = gameThread;
-	}
-
-	public void setcChecker(CollisionChecker cChecker) {
-		this.cChecker = cChecker;
 	}
 
 	public void setInvaded(boolean invaded) {
@@ -180,11 +187,18 @@ public class GamePanel extends JPanel implements Runnable {
 	// UPDATES GAME EVENTS
 	public void update() {
 		// Player
-		if (player.getLives() <= 0) {
+		if (player.getLives() <= 0 || hasInvaded == true) {
 			player.setDirection("dead");
+			attack.die();
+			for(Enemy enemy : enemies) {
+				if(!enemy.attack().isDestroyed()) {
+					enemy.attack().setDestroyed(true);
+				}
+				
+				enemy.moveLose(player, screenWidth, tileSize);
+			}
 		} else {
 			player.act();
-
 			// Attack
 			if (player.getKeyH().spacePressed == true && !attack.isVisible()) {
 				attack = new PlayerAttack(player.getX(), player.getY());
@@ -203,7 +217,7 @@ public class GamePanel extends JPanel implements Runnable {
 							enemy.setHealth(enemy.getHealth() - 1);
 							if (enemy.getHealth() == 1) {
 								try {
-									enemy.setImage(enemy.getEnemySprite() == 1 || enemy.getEnemySprite() == 3
+									enemy.setImage(enemy.getSpriteNum() == 1 || enemy.getSpriteNum() == 3
 											? ImageIO.read(getClass().getResourceAsStream("/enemy/Skeleton2.png"))
 											: ImageIO.read(getClass().getResourceAsStream("/enemy/Skeleton3.png")));
 								} catch (IOException e) {
@@ -229,24 +243,20 @@ public class GamePanel extends JPanel implements Runnable {
 			}
 			// Enemy
 			for (Enemy enemy : enemies) {
-				enemy.setCollisionOn(false);
-				this.cChecker.checkTile(enemy);
-				if (enemy.isCollisionOn() && enemy.getDirection() == "right") {
+				if (enemy.getX() >= screenWidth - tileSize && enemy.getDirection() == "right") {
 					Iterator<Enemy> i1 = enemies.iterator();
 					while (i1.hasNext()) {
 						Enemy e1 = i1.next();
-						e1.setY(e1.getY() + 50);
+						e1.setY(e1.getY() + tileSize);
 						e1.setDirection("left");
-						e1.setCollisionOn(false);
 					}
 
 				}
-				if (enemy.isCollisionOn() && enemy.getDirection() == "left") {
+				if (enemy.getX() <= 0 && enemy.getDirection() == "left") {
 					Iterator<Enemy> i2 = enemies.iterator();
 					while (i2.hasNext()) {
 						Enemy e2 = i2.next();
-						e2.setY(e2.getY() + 50);
-						e2.setCollisionOn(false);
+						e2.setY(e2.getY() + tileSize);
 						e2.setDirection("right");
 					}
 
@@ -259,7 +269,7 @@ public class GamePanel extends JPanel implements Runnable {
 				Enemy enemy = it.next();
 				if (enemy.isVisible()) {
 					int y = enemy.getY();
-					if (y >= player.getY()) {
+					if (y >= player.getY() - tileSize / 2) {
 						hasInvaded = true;
 					}
 					enemy.move();
@@ -271,7 +281,7 @@ public class GamePanel extends JPanel implements Runnable {
 			for (Enemy enemy : enemies) {
 				int shoot = generator.nextInt(enemyFireInterval);
 				Enemy.EnemyAttack attack = enemy.attack();
-				if (shoot == enemyFireInterval - 3 && enemy.isVisible()) {
+				if (shoot == enemyFireInterval - 3 && enemy.isVisible() && attack.isDestroyed()) {
 					attack.setDestroyed(false);
 					attack.setX(enemy.getX());
 					attack.setY(enemy.getY());
@@ -291,7 +301,7 @@ public class GamePanel extends JPanel implements Runnable {
 
 				if (!attack.isDestroyed()) {
 					attack.setY(attack.getY() + 3);
-					if (attack.getY() >= player.getY() + 30) {
+					if (attack.getY() >= player.getY() + tileSize) {
 						attack.setDestroyed(true);
 					}
 				}
@@ -320,6 +330,9 @@ public class GamePanel extends JPanel implements Runnable {
 		Graphics2D g2 = (Graphics2D) g;
 		doDrawing(g2);
 		String text = "You Win";
+		String guide = "Press SPACE to shoot";
+		String guide2 = "Press LEFT or RIGHT arrow keys to move";
+		g2.setFont(g2.getFont().deriveFont(Font.BOLD, tileSize / 2));
 		if (player.getLives() <= 0) {
 			text = "You lost by dying";
 		}
@@ -330,11 +343,16 @@ public class GamePanel extends JPanel implements Runnable {
 		if (player.getLives() <= 0 || enemies.size() == enemyKillCount || hasInvaded == true) {
 			g2.setColor(new Color(0, 0, 0, 150));
 			g2.fillRect(0, 0, screenWidth, screenHeight);
-			int x = tileSize * 6;
-			int y = tileSize * 6;
-			g2.setFont(g2.getFont().deriveFont(Font.BOLD, 210f));
+			g2.setFont(g2.getFont().deriveFont(Font.BOLD, tileSize));
 			g2.setColor(Color.white);
-			g2.drawString(text, x + 4, y + 4);
+			g2.drawString(text, screenHeight / 2, screenHeight / 2);
+		} else {
+			g2.setFont(g2.getFont().deriveFont(Font.BOLD, tileSize / 3));
+			g2.setColor(Color.black);
+			g2.drawString(guide, 0, screenHeight - tileSize / 3);
+			g2.drawString(guide2, 0, screenHeight);
+		}
+		if(enemies.size() == enemyKillCount) {
 			gameThread = null;
 		}
 		g2.dispose();
@@ -389,5 +407,4 @@ public class GamePanel extends JPanel implements Runnable {
 			}
 		}
 	}
-
 }
