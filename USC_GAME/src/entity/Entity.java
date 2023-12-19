@@ -1,94 +1,84 @@
 package entity;
+
 import java.awt.Rectangle;
 import java.awt.Image;
 
 public class Entity {
-    private int worldX;
-    private int worldY;
-    private int dirX;
-    private int dirY;
-    private int speed;
-    private int originalSpeed;
-    private Image image;
-    private String direction;
-    private int spriteCounter; 
-    private int spriteNum;
-    private Rectangle solidArea;
-    private boolean collisionOn;
-    
-    private boolean visible;
-    private boolean dying;
-    
-    
-    public Entity() {
-    	visible = true;
-    }
-    
-    public void die() {
-    	visible = false;
-    }
-    
-    public boolean isVisible() {
+	private int worldX;
+	private int worldY;
+	private int dirX;
+	private int speed;
+	private int originalSpeed;
+	private Image image;
+	private String direction;
+	private int spriteCounter;
+	private int spriteNum;
+	private Rectangle solidArea;
+	private boolean collisionOn;
+	private boolean visible;
+	private boolean dying;
 
-        return visible;
-    }
+	public Entity() {
+		visible = true;
+	}
 
-    public void setVisible(boolean visible) {
+	public void die() {
+		visible = false;
+	}
 
-        this.visible = visible;
-    }
-    
-    public void setDying(boolean dying) {
+	public boolean isVisible() {
 
-        this.dying = dying;
-    }
+		return visible;
+	}
 
-    public boolean isDying() {
+	public void setVisible(boolean visible) {
 
-        return this.dying;
-    }
-    
-    public int getX() {
-    	return worldX;
-    }
-    
-    public void setX(int x) {
-    	this.worldX = x;
-    }
-    
-    public int getDirX() {
-    	return dirX;
-    }
-    
-    public void setDirX(int x) {
-    	this.dirX = x;
-    }
-    
-    public int getY() {
-    	return worldY;
-    }
-    
-    public void setY(int y) {
-    	this.worldY = y;
-    }
-    
-    public int getDirY() {
-    	return dirX;
-    }
-    
-    public void setDirY(int y) {
-    	this.dirY = y;
-    }
-    
-    public int getSpeed() {
-    	return speed;
-    }
-    
-    public void setSpeed(int speed) {
-    	this.speed = speed;
-    }
-    
-    public int getOriginalSpeed() {
+		this.visible = visible;
+	}
+
+	public void setDying(boolean dying) {
+
+		this.dying = dying;
+	}
+
+	public boolean isDying() {
+
+		return this.dying;
+	}
+
+	public int getX() {
+		return worldX;
+	}
+
+	public void setX(int x) {
+		this.worldX = x;
+	}
+
+	public int getDirX() {
+		return dirX;
+	}
+
+	public void setDirX(int x) {
+		this.dirX = x;
+	}
+
+	public int getY() {
+		return worldY;
+	}
+
+	public void setY(int y) {
+		this.worldY = y;
+	}
+
+	public int getSpeed() {
+		return speed;
+	}
+
+	public void setSpeed(int speed) {
+		this.speed = speed;
+	}
+
+	public int getOriginalSpeed() {
 		return originalSpeed;
 	}
 
