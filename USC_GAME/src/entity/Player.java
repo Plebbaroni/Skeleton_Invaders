@@ -34,7 +34,7 @@ public class Player extends Entity {
 	public void setDefaultValues() {
 		setX(gp.getTileSize() * 9);
 		setY(gp.getTileSize() * 10);
-		setLives(3);
+		lives = 3;
 		setSpeed(0);
 		setDirection("right");
 	}
