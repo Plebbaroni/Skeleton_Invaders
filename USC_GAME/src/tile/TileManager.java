@@ -22,7 +22,7 @@ public class TileManager {
 		this.gp = gp;
 
 		tile = new Tile[70];
-		mapTileNum = new int[gp.getMaxWorldCol()][gp.getMaxWorldRow()];
+		mapTileNum = new int[gp.getMaxScreenCol()][gp.getScreenWidth()];
 
 		getTileImage();
 		loadMap();
@@ -102,11 +102,11 @@ public class TileManager {
 			int col = 0;
 			int row = 0;
 
-			while (col < gp.getMaxWorldCol() && row < gp.getMaxWorldRow()) {
+			while (col < gp.getMaxScreenCol() && row < gp.getMaxScreenRow()) {
 
 				String line = br.readLine();
 
-				while (col < gp.getMaxWorldCol()) {
+				while (col < gp.getMaxScreenCol()) {
 
 					String numbers[] = line.split(" ");
 					int num = Integer.parseInt(numbers[col]);
@@ -114,7 +114,7 @@ public class TileManager {
 					mapTileNum[col][row] = num;
 					col++;
 				}
-				if (col == gp.getMaxWorldCol()) {
+				if (col == gp.getMaxScreenCol()) {
 					col = 0;
 					row++;
 				}
@@ -130,13 +130,13 @@ public class TileManager {
 		int worldCol = 0;
 		int worldRow = 0;
 
-		while (worldCol < gp.getMaxWorldCol() && worldRow < gp.getMaxWorldRow()) {
+		while (worldCol < gp.getMaxScreenCol() && worldRow < gp.getMaxScreenRow()) {
 			int tileNum = mapTileNum[worldCol][worldRow];
 
 			int worldX = worldCol * gp.getTileSize();
 			int worldY = worldRow * gp.getTileSize();
-			int screenX = worldX - gp.getPlayer().getX() + gp.getPlayer().getScreenX();
-			int screenY = worldY - gp.getPlayer().getY() + gp.getPlayer().getScreenY();
+			int screenX = worldX - (int)gp.getPlayer().getX() + gp.getPlayer().getScreenX();
+			int screenY = worldY - (int)gp.getPlayer().getY() + gp.getPlayer().getScreenY();
 
 			// Draw the tile image
 			g2.drawImage(tile[tileNum].image, screenX, screenY, gp.getTileSize(), gp.getTileSize(), null);
@@ -146,7 +146,7 @@ public class TileManager {
 
 			worldCol++;
 
-			if (worldCol == gp.getMaxWorldCol()) {
+			if (worldCol == gp.getMaxScreenCol()) {
 				worldCol = 0;
 				worldRow++;
 			}

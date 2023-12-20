@@ -4,9 +4,9 @@ import java.awt.Rectangle;
 import java.awt.Image;
 
 public class Entity {
-	private int x;
-	private int y;
-	private int speed;
+	private float x;
+	private float y;
+	private float speed;
 	private Image image;
 	private String direction;
 	private int spriteCounter;
@@ -43,27 +43,27 @@ public class Entity {
 		return this.dying;
 	}
 
-	public int getX() {
+	public float getX() {
 		return x;
 	}
 
-	public void setX(int x) {
+	public void setX(float x) {
 		this.x = x;
 	}
 
-	public int getY() {
+	public float getY() {
 		return y;
 	}
 
-	public void setY(int y) {
+	public void setY(float y) {
 		this.y = y;
 	}
 
-	public int getSpeed() {
+	public float getSpeed() {
 		return speed;
 	}
 
-	public void setSpeed(int speed) {
+	public void setSpeed(float speed) {
 		this.speed = speed;
 	}
 
