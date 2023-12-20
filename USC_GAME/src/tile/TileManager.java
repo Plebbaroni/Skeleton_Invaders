@@ -52,14 +52,6 @@ public class TileManager {
 			tile[0] = new Tile();
 			tile[0].image = ImageIO.read(getClass().getResourceAsStream("/tiles/Outside.png"));
 
-//	        LOOP FOR TILES 1 - 55
-			/*
-			 * for(int i=1; i<51; i++) { System.out.println("Resource path: " +
-			 * "/tiles/Outside.png"); tile[i] = new Tile(); tile[i].image =
-			 * ImageIO.read(getClass().getResourceAsStream("/tiles/Outside" + i + ".png"));
-			 * tile[i].collision = true; }
-			 */
-
 			for (int i = 1; i < 56; i++) {
 				tile[i] = new Tile();
 				tile[i].image = ImageIO.read(getClass().getResourceAsStream("/tiles/joegrass.png"));
@@ -135,8 +127,8 @@ public class TileManager {
 
 			int worldX = worldCol * gp.getTileSize();
 			int worldY = worldRow * gp.getTileSize();
-			int screenX = worldX - (int)gp.getPlayer().getX() + gp.getPlayer().getScreenX();
-			int screenY = worldY - (int)gp.getPlayer().getY() + gp.getPlayer().getScreenY();
+			int screenX = worldX - (int) gp.getPlayer().getX() + gp.getPlayer().getScreenX();
+			int screenY = worldY - (int) gp.getPlayer().getY() + gp.getPlayer().getScreenY();
 
 			// Draw the tile image
 			g2.drawImage(tile[tileNum].image, screenX, screenY, gp.getTileSize(), gp.getTileSize(), null);

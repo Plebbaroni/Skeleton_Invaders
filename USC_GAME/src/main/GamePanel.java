@@ -41,10 +41,9 @@ public class GamePanel extends JPanel implements Runnable {
 	private PlayerAttack attack;
 	private List<Enemy> enemies;
 	private int enemyFireInterval;
-	private int originalFireInterval;
+	private float originalFireInterval;
 	private int enemyKillCount;
 	private boolean hasInvaded;
-	private int dynamicDiff;
 
 	public int getTileSize() {
 		return TILE_SIZE;
@@ -76,14 +75,6 @@ public class GamePanel extends JPanel implements Runnable {
 
 	public boolean hasInvaded() {
 		return hasInvaded;
-	}
-	
-	public int getDynamicDiff() {
-		return dynamicDiff;
-	}
-
-	public void setDynamicDiff(int dynamicDiff) {
-		this.dynamicDiff = dynamicDiff;
 	}
 
 	public TileManager getTileM() {
@@ -128,7 +119,6 @@ public class GamePanel extends JPanel implements Runnable {
 	public void initGame() {
 		enemies = new ArrayList<>();
 		enemyKillCount = 0;
-		dynamicDiff = 0;
 		enemyFireInterval = 2500;
 		originalFireInterval = enemyFireInterval;
 		hasInvaded = false;
@@ -142,22 +132,13 @@ public class GamePanel extends JPanel implements Runnable {
 
 		player = new Player(this, keyHandler);
 		attack = new PlayerAttack();
-		player.setScreenX((int)player.getX());
-		player.setScreenY((int)player.getY());
+		player.setScreenX((int) player.getX());
+		player.setScreenY((int) player.getY());
 	}
 
 	public void startGameThread() {
 		gameThread = new Thread(this);
 		gameThread.start();
-	}
-
-//    PLAYER LOCATION
-	public float getPlayerX() {
-		return player.getX();
-	}
-
-	public float getPlayerY() {
-		return player.getY();
 	}
 
 // TIME SHIFT TO SET FPS
@@ -193,29 +174,36 @@ public class GamePanel extends JPanel implements Runnable {
 
 	// UPDATES GAME EVENTS
 	public void update() {
-		// Player
-		if (player.getLives() <= 0 || hasInvaded == true) {
-			player.setDirection("dead");
+		// Game end
+		if (player.getLives() <= 0 || hasInvaded == true || enemyKillCount == enemies.size()) {
+			if (player.getLives() <= 0 || hasInvaded == true) {
+				player.die();
+				for (Enemy enemy : enemies) {
+					enemy.moveLose(player, SCREEN_WIDTH, TILE_SIZE);
+				}
+			} else {
+				gameThread = null;
+			}
 			attack.die();
 			for (Enemy enemy : enemies) {
 				if (!enemy.attack().isDestroyed()) {
 					enemy.attack().setDestroyed(true);
 				}
-
-				enemy.moveLose(player, SCREEN_WIDTH, TILE_SIZE);
 			}
 		} else {
+			// Player
 			player.act();
+
 			// Attack
 			if (player.getKeyH().spacePressed == true && !attack.isVisible()) {
 				attack = new PlayerAttack(player.getX(), player.getY());
 			}
 			if (attack.isVisible()) {
-				int atkX = (int)attack.getX();
-				int atkY = (int)attack.getY();
+				int atkX = (int) attack.getX();
+				int atkY = (int) attack.getY();
 				for (Enemy enemy : enemies) {
-					int enemyX = (int)enemy.getX();
-					int enemyY = (int)enemy.getY();
+					int enemyX = (int) enemy.getX();
+					int enemyY = (int) enemy.getY();
 
 					if (enemy.isVisible() && attack.isVisible()) {
 						if (atkX >= enemyX && atkX <= (enemyX + TILE_SIZE / 2) && atkY >= enemyY
@@ -233,13 +221,13 @@ public class GamePanel extends JPanel implements Runnable {
 								}
 							}
 							if (enemy.getHealth() <= 0) {
-								enemy.setDying(true);
+								enemy.die();
 								enemyKillCount++;
 							}
 						}
 					}
 				}
-				int y = (int)attack.getY();
+				int y = (int) attack.getY();
 				y -= 10;
 
 				if (y < 0) {
@@ -275,7 +263,7 @@ public class GamePanel extends JPanel implements Runnable {
 			while (it.hasNext()) {
 				Enemy enemy = it.next();
 				if (enemy.isVisible()) {
-					int y = (int)enemy.getY();
+					int y = (int) enemy.getY();
 					if (y >= player.getY() - TILE_SIZE / 2) {
 						hasInvaded = true;
 					}
@@ -293,10 +281,10 @@ public class GamePanel extends JPanel implements Runnable {
 					attack.setX(enemy.getX());
 					attack.setY(enemy.getY());
 				}
-				int atkX = (int)attack.getX();
-				int atkY = (int)attack.getY();
-				int playerX = (int)player.getX();
-				int playerY = (int)player.getY();
+				int atkX = (int) attack.getX();
+				int atkY = (int) attack.getY();
+				int playerX = (int) player.getX();
+				int playerY = (int) player.getY();
 				if (player.isVisible() && !attack.isDestroyed()) {
 					attack.setY(attack.getY() + 5);
 					if (atkY >= playerY + TILE_SIZE) {
@@ -310,51 +298,50 @@ public class GamePanel extends JPanel implements Runnable {
 					}
 				}
 			}
-			
+
 			// Dynamic Difficulty
-			for(Enemy enemy : enemies) {
-				if(enemyKillCount >= Math.floor(enemies.size() * 0.99)) {
+			for (Enemy enemy : enemies) {
+				if (enemyKillCount >= Math.floor(enemies.size() * 0.99)) {
 					enemy.setSpeed(9.0f);
-					enemyFireInterval = (int)((float)originalFireInterval * 0.04f);
-				} else if(enemyKillCount >= Math.floor(enemies.size() * 0.96)) {
+					enemyFireInterval = (int) (originalFireInterval * 0.04f);
+				} else if (enemyKillCount >= Math.floor(enemies.size() * 0.96)) {
 					enemy.setSpeed(4.5f);
-					enemyFireInterval = (int)((float)originalFireInterval * 0.08f);
-				} else if(enemyKillCount >= Math.floor(enemies.size() * 0.88)) {
+					enemyFireInterval = (int) (originalFireInterval * 0.08f);
+				} else if (enemyKillCount >= Math.floor(enemies.size() * 0.88)) {
 					enemy.setSpeed(4.1f);
-					enemyFireInterval = (int)((float)originalFireInterval * 0.16f);
-				} else if(enemyKillCount >= Math.floor(enemies.size() * 0.80)) {
+					enemyFireInterval = (int) (originalFireInterval * 0.16f);
+				} else if (enemyKillCount >= Math.floor(enemies.size() * 0.80)) {
 					enemy.setSpeed(3.7f);
-					enemyFireInterval = (int)((float)originalFireInterval * 0.24f);
-				} else if(enemyKillCount >= Math.floor(enemies.size() * 0.72)) {
+					enemyFireInterval = (int) (originalFireInterval * 0.24f);
+				} else if (enemyKillCount >= Math.floor(enemies.size() * 0.72)) {
 					enemy.setSpeed(3.3f);
-					enemyFireInterval = (int)((float)originalFireInterval * 0.32f);
-				} else if(enemyKillCount >= Math.floor(enemies.size() * 0.64)) {
+					enemyFireInterval = (int) (originalFireInterval * 0.32f);
+				} else if (enemyKillCount >= Math.floor(enemies.size() * 0.64)) {
 					enemy.setSpeed(2.9f);
-					enemyFireInterval = (int)((float)originalFireInterval * 0.38f);
-				} else if(enemyKillCount >= Math.floor(enemies.size() * 0.56)) {
+					enemyFireInterval = (int) (originalFireInterval * 0.38f);
+				} else if (enemyKillCount >= Math.floor(enemies.size() * 0.56)) {
 					enemy.setSpeed(2.6f);
-					enemyFireInterval = (int)((float)originalFireInterval * 0.44f);
-				} else if(enemyKillCount >= Math.floor(enemies.size() * 0.48)) {
+					enemyFireInterval = (int) (originalFireInterval * 0.44f);
+				} else if (enemyKillCount >= Math.floor(enemies.size() * 0.48)) {
 					enemy.setSpeed(2.3f);
-					enemyFireInterval = (int)((float)originalFireInterval * 0.52f);
-				} else if(enemyKillCount >= Math.floor(enemies.size() * 0.40)) {
+					enemyFireInterval = (int) (originalFireInterval * 0.52f);
+				} else if (enemyKillCount >= Math.floor(enemies.size() * 0.40)) {
 					enemy.setSpeed(2.0f);
-					enemyFireInterval = (int)((float)originalFireInterval * 0.60f);
-				} else if(enemyKillCount >= Math.floor(enemies.size() * 0.32)) {
+					enemyFireInterval = (int) (originalFireInterval * 0.60f);
+				} else if (enemyKillCount >= Math.floor(enemies.size() * 0.32)) {
 					enemy.setSpeed(1.8f);
-					enemyFireInterval = (int)((float)originalFireInterval * 0.68f);
-				} else if(enemyKillCount >= Math.floor(enemies.size() * 0.24)) {
+					enemyFireInterval = (int) (originalFireInterval * 0.68f);
+				} else if (enemyKillCount >= Math.floor(enemies.size() * 0.24)) {
 					enemy.setSpeed(1.6f);
-					enemyFireInterval = (int)((float)originalFireInterval * 0.76f);
-				} else if(enemyKillCount >= Math.floor(enemies.size() * 0.16)) {
+					enemyFireInterval = (int) (originalFireInterval * 0.76f);
+				} else if (enemyKillCount >= Math.floor(enemies.size() * 0.16)) {
 					enemy.setSpeed(1.4f);
-					enemyFireInterval = (int)((float)originalFireInterval * 0.84f);
-				} else if(enemyKillCount >= Math.floor(enemies.size() * 0.08)) {
+					enemyFireInterval = (int) (originalFireInterval * 0.84f);
+				} else if (enemyKillCount >= Math.floor(enemies.size() * 0.08)) {
 					enemy.setSpeed(1.2f);
-					enemyFireInterval = (int)((float)originalFireInterval * 0.92f);
+					enemyFireInterval = (int) (originalFireInterval * 0.92f);
 				}
 			}
-				
 		}
 	}
 
@@ -380,24 +367,21 @@ public class GamePanel extends JPanel implements Runnable {
 		} else if (hasInvaded == true) {
 			text = "You lost by invasion";
 		}
-		
+
 		if (player.getLives() <= 0 || enemies.size() == enemyKillCount || hasInvaded == true) {
 			g2.setColor(new Color(0, 0, 0, 150));
 			g2.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 			g2.setFont(g2.getFont().deriveFont(Font.BOLD, TILE_SIZE));
 			g2.setColor(Color.white);
 			g2.drawString(text, SCREEN_HEIGHT / 2, SCREEN_HEIGHT / 2);
-			if (enemies.size() == enemyKillCount) {
-				gameThread = null;
-			}
 		} else {
 			g2.setFont(g2.getFont().deriveFont(Font.BOLD, TILE_SIZE / 3));
 			g2.setColor(Color.black);
 			g2.drawString(guide, 0, SCREEN_HEIGHT - TILE_SIZE / 3);
 			g2.drawString(guide2, 0, SCREEN_HEIGHT);
 			// Warns if invaders are getting closer
-			for(Enemy enemy : enemies) {
-				if(enemy.isVisible() && enemy.getY() >= player.getY() - (TILE_SIZE * 2)) {
+			for (Enemy enemy : enemies) {
+				if (enemy.isVisible() && enemy.getY() >= player.getY() - (TILE_SIZE * 2)) {
 					g2.setFont(g2.getFont().deriveFont(Font.BOLD, TILE_SIZE / 3));
 					g2.setColor(Color.red);
 					g2.drawString(warning, SCREEN_HEIGHT / 2, TILE_SIZE / 2);
@@ -409,21 +393,23 @@ public class GamePanel extends JPanel implements Runnable {
 
 	public void doDrawing(Graphics2D g2) {
 		tileM.draw(g2);
-		player.animate(g2);
+		drawPlayer(g2);
 		drawEnemy(g2);
 		drawAttack(g2);
 		drawEnemyAttack(g2);
 		drawLives(g2);
 	}
 
+	public void drawPlayer(Graphics2D g2) {
+		if (player.isVisible()) {
+			g2.drawImage(player.getImage(), player.getScreenX(), player.getScreenY(), TILE_SIZE, TILE_SIZE * 2, null);
+		}
+	}
+
 	public void drawEnemy(Graphics2D g2) {
 		for (Enemy enemy : enemies) {
 			if (enemy.isVisible()) {
-				g2.drawImage(enemy.getImage(), (int)enemy.getX(), (int)enemy.getY(), TILE_SIZE, TILE_SIZE * 2, this);
-			}
-
-			if (enemy.isDying()) {
-				enemy.die();
+				g2.drawImage(enemy.getImage(), (int) enemy.getX(), (int) enemy.getY(), TILE_SIZE, TILE_SIZE * 2, this);
 			}
 		}
 	}
@@ -441,9 +427,8 @@ public class GamePanel extends JPanel implements Runnable {
 	}
 
 	public void drawAttack(Graphics2D g2) {
-
 		if (attack.isVisible()) {
-			g2.drawImage(attack.getImage(), (int)attack.getX(), (int)attack.getY(), TILE_SIZE / 2, TILE_SIZE, this);
+			g2.drawImage(attack.getImage(), (int) attack.getX(), (int) attack.getY(), TILE_SIZE / 2, TILE_SIZE, this);
 		}
 
 	}
@@ -452,7 +437,7 @@ public class GamePanel extends JPanel implements Runnable {
 		for (Enemy enemy : enemies) {
 			Enemy.EnemyAttack e = enemy.attack();
 			if (!e.isDestroyed()) {
-				g2.drawImage(e.getImage(), (int)e.getX(), (int)e.getY(), TILE_SIZE / 2, TILE_SIZE, this);
+				g2.drawImage(e.getImage(), (int) e.getX(), (int) e.getY(), TILE_SIZE / 2, TILE_SIZE, this);
 			}
 		}
 	}

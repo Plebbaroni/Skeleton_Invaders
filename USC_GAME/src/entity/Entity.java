@@ -1,6 +1,5 @@
 package entity;
 
-import java.awt.Rectangle;
 import java.awt.Image;
 
 public class Entity {
@@ -11,9 +10,7 @@ public class Entity {
 	private String direction;
 	private int spriteCounter;
 	private int spriteNum;
-	private Rectangle solidArea;
 	private boolean visible;
-	private boolean dying;
 
 	public Entity() {
 		visible = true;
@@ -31,16 +28,6 @@ public class Entity {
 	public void setVisible(boolean visible) {
 
 		this.visible = visible;
-	}
-
-	public void setDying(boolean dying) {
-
-		this.dying = dying;
-	}
-
-	public boolean isDying() {
-
-		return this.dying;
 	}
 
 	public float getX() {
@@ -98,13 +85,4 @@ public class Entity {
 	public void setSpriteNum(int spriteNum) {
 		this.spriteNum = spriteNum;
 	}
-
-	public Rectangle getSolidArea() {
-		return solidArea;
-	}
-
-	public void setSolidArea(Rectangle solidArea) {
-		this.solidArea = solidArea;
-	}
-
 }
