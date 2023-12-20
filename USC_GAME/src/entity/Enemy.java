@@ -1,6 +1,5 @@
 package entity;
 
-import java.awt.Rectangle;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
@@ -9,17 +8,13 @@ public class Enemy extends Entity {
 	private EnemyAttack attack;
 
 	public Enemy(float x, float y) {
-		initEnemy(x, y);
-		Rectangle area = new Rectangle();
-		area.x = 20;
-		area.y = 135;
-		area.width = 40;
-		area.height = 12;
-		setSolidArea(area);
+		setX(x);
+		setY(y);
+		attack = new EnemyAttack(x, y);
 		setSpeed(1);
 		setDirection("left");
 		setSpriteNum(1);
-		setSpriteCounter(0);
+		setSpriteCounter(19);
 	}
 
 	public int getHealth() {
@@ -28,12 +23,6 @@ public class Enemy extends Entity {
 
 	public void setHealth(int health) {
 		this.health = health;
-	}
-
-	public void initEnemy(float x, float y) {
-		setX(x);
-		setY(y);
-		this.attack = new EnemyAttack(x, y);
 	}
 
 	public EnemyAttack attack() {

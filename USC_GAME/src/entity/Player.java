@@ -1,11 +1,8 @@
 package entity;
 
-import java.awt.Graphics2D;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-
-import java.awt.Rectangle;
 import main.GamePanel;
 import main.KeyHandler;
 
@@ -20,23 +17,12 @@ public class Player extends Entity {
 	public Player(GamePanel gp, KeyHandler keyH) {
 		this.gp = gp;
 		this.keyH = keyH;
-		Rectangle area = new Rectangle();
-		area.x = 20;
-		area.y = 135;
-		area.width = 40;
-		area.height = 12;
-		setSolidArea(area);
-		setDefaultValues();
-		getPlayerImage();
-	}
-
-	// SET DEFAULT VALUES OF PLAYER HERE
-	public void setDefaultValues() {
 		setX(gp.getTileSize() * 9);
 		setY(gp.getTileSize() * 10);
 		lives = 3;
 		setSpeed(0);
 		setDirection("right");
+		getPlayerImage();
 	}
 
 	public GamePanel getGp() {
@@ -138,9 +124,7 @@ public class Player extends Entity {
 			setSpeed(12);
 			imageCycler = 2;
 		}
-	}
-
-	public void animate(Graphics2D g2) {
+		
 		switch (getDirection()) {
 		// LEFT DIRECTION
 		case "left":
@@ -205,17 +189,7 @@ public class Player extends Entity {
 				e.printStackTrace();
 			}
 			break;
-		case "dead":
-			try {
-				setImage(ImageIO.read(getClass().getResourceAsStream("")));
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			break;
 		}
-
-		g2.drawImage(getImage(), screenX, screenY, gp.getTileSize(), gp.getTileSize() * 2, null);
 	}
 
 	public static class PlayerAttack extends Entity {
