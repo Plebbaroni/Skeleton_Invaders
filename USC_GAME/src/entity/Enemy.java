@@ -8,7 +8,7 @@ public class Enemy extends Entity {
 	private int health;
 	private EnemyAttack attack;
 
-	public Enemy(int x, int y) {
+	public Enemy(float x, float y) {
 		initEnemy(x, y);
 		Rectangle area = new Rectangle();
 		area.x = 20;
@@ -30,7 +30,7 @@ public class Enemy extends Entity {
 		this.health = health;
 	}
 
-	public void initEnemy(int x, int y) {
+	public void initEnemy(float x, float y) {
 		setX(x);
 		setY(y);
 		this.attack = new EnemyAttack(x, y);
@@ -112,7 +112,7 @@ public class Enemy extends Entity {
 	public class EnemyAttack extends Entity {
 		private boolean isDestroyed;
 
-		public EnemyAttack(int x, int y) {
+		public EnemyAttack(float x, float y) {
 			initAttack(x, y);
 		}
 
@@ -124,7 +124,7 @@ public class Enemy extends Entity {
 			this.isDestroyed = destroyed;
 		}
 
-		public void initAttack(int x, int y) {
+		public void initAttack(float x, float y) {
 			setDestroyed(true);
 			setX(x);
 			setY(y);
@@ -139,7 +139,7 @@ public class Enemy extends Entity {
 	}
 
 	public static class Skeleton extends Enemy {
-		public Skeleton(int x, int y) {
+		public Skeleton(float x, float y) {
 			super(x, y);
 			try {
 				setImage(ImageIO.read(getClass().getResourceAsStream("/enemy/Skeleton1.png")));
@@ -152,7 +152,7 @@ public class Enemy extends Entity {
 	}
 
 	public static class ArmoredSkeleton extends Skeleton {
-		public ArmoredSkeleton(int x, int y) {
+		public ArmoredSkeleton(float x, float y) {
 			super(x, y);
 			try {
 				setImage(ImageIO.read(getClass().getResourceAsStream("/enemy/ArmoredSkeleton1.png")));

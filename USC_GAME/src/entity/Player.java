@@ -127,8 +127,8 @@ public class Player extends Entity {
 				}
 				setSpriteCounter(0);
 			}
-			screenX = getX();
-			screenY = getY();
+			screenX = (int)getX();
+			screenY = (int)getY();
 		}
 
 		if (keyH.shiftPressed == false) {
@@ -224,18 +224,18 @@ public class Player extends Entity {
 
 		}
 
-		public PlayerAttack(int x, int y) {
+		public PlayerAttack(float x, float y) {
 			attack(x, y);
 		}
 
-		private void attack(int x, int y) {
+		private void attack(float x, float y) {
 			try {
 				setImage(ImageIO.read(getClass().getResourceAsStream("/player/arrowSprite.png")));
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			setX(x + 13);
+			setX(x + 17);
 			setY(y - 1);
 		}
 	}
